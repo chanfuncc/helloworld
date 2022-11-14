@@ -1,0 +1,58 @@
+syntax = "proto3";
+package helloworld;
+
+// Client: receive the server's command to change the local config.
+service ClientService {
+  rpc helloOfClient(HelloRequest) returns(HelloReply) {}
+  rpc ChangeConfig(ConfigRequest) returns(ConfigReply) {}
+}
+
+// ServerManger: receive the clients' request of register/unregister
+service ManagerService {
+  // rpc Register(RegisterRequest) returns(RegisterReply) {}
+  // rpc UnRegister(UnRegisterRequest) returns(UnRegisterRepky) {}
+}
+
+// SocketServer: receive the clients' heartbeats(contains statistics uploaded)
+// and the connection request.
+service ServerService {
+  rpc helloOfServer(HelloRequest) returns(HelloReply) {}
+  rpc HeartBeat(HeartBeatReqeust) returns(HeartBeatReply) {}
+  rpc BuildConnection(ConnRequest) returns(ConnReply) {}
+}
+
+message HelloRequest { string name = 1; }
+message HelloReply { string msg = 1; }
+
+// Client, ServerManager, SocketServer share the `StatusCode`
+enum StatusCode {
+  OK = 0;
+  PARAM_ERROR = 1;
+  UNKNOWN_ERROR = 2;
+  // ...
+}
+
+message ConfigRequest {
+  repeated string attr = 1;
+  repeated string newValue = 2;
+}
+message ConfigReply { StatusCode code = 1; }
+
+message Statistics {
+  // 1. mem usage
+  // 2. cpu usage/load
+  // 3. disk usage
+  // 4. tasks running
+  // ... etc
+}
+message HeartBeatReqeust {
+  Statistics state_info = 1;
+  // other essential fields
+}
+message HeartBeatReply { StatusCode statusCode = 1; }
+
+message ConnRequest {
+  string ip = 1;
+  uint32 port = 2;
+}
+message ConnReply { StatusCode statusCode = 1; }
